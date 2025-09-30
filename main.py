@@ -1,5 +1,6 @@
 import numpy as np
 import time
+from tqdm import tqdm
 
 def create_random_memories(N,p):
     # returns p random memories
@@ -66,44 +67,38 @@ def get_conv_time_and_point(s0, w, max_iters, mode="sequential"):
             return [s, k]
     return [s, np.inf]
 
-def punto_1_3():
-    N = 30
-    alfa = 0.10
-    p = int(alfa*N)
+def punto_1_3_calc(Ns, alfas):
+    for N in Ns:
+        for alfa in alfas:
+            p = int(alfa*N)
 
-    X = create_random_memories(N, p)
-    w = get_weights_but_fast(memories=X)
+            X = create_random_memories(N, p)
+            w = get_weights_but_fast(memories=X)
 
-    print_states(X, "Memories:")
+            conv_points_p, conv_time_p = map(np.array, zip(*[ 
+                get_conv_time_and_point(x, w, 20, mode="parallel") 
+                for x in tqdm(X, desc="Parallel calculation") 
+            ]))
+            conv_points_s, conv_time_s = map(np.array, zip(*[ 
+                get_conv_time_and_point(x, w, 20, mode="sequential") 
+                for x in tqdm(X, desc="Sequential calculation")
+            ]))
+            filename = f"tp4_1_3_N_{N}_p_{p}.npz"
+            np.savez(filename,
+                     N=N,
+                     p=p,
+                     X=X,
+                     w=w,
+                     conv_points_p=conv_points_p,
+                     conv_time_p=conv_time_p,
+                     conv_points_s=conv_points_s,
+                     conv_time_s=conv_time_s,
+                     )
 
-    t0 = time.perf_counter()
-    print("PARALLEL")
-    conv_points, conv_time = map(np.array, zip(*[ get_conv_time_and_point(x, w, 20, mode="parallel") for x in X ]))
-    print(conv_time)
-    print_states(conv_points)
-    t1 = time.perf_counter()
-    print("SEQUENTIAL")
-    conv_points, conv_time = map(np.array, zip(*[ get_conv_time_and_point(x, w, 20, mode="sequential") for x in X ]))
-    print(conv_time)
-    print_states(conv_points)
-    t2 = time.perf_counter()
-
-    print(f"convergence total runtime parallel: {t1-t0}")
-    print(f"convergence total runtime sequential: {t2-t1}")
-    # print(f"parallel convergence iterations: \n{conv_parallel[:,1]}")
-    # print(f"sequential convergence iterations: \n{conv_sequential[:][1]}")
 
 
 if __name__ == "__main__":
-    # N = 1000  # Cantidad de neuronas
-    # alfa = 0.18
-    # p = int(alfa*N)   # Cant de patrones
-
     np.random.seed(12345)
+    punto_1_3_calc([10,100], [0.2])
 
-    # X = create_random_memories(N, p)
-    # w = get_weights(memories=X)
-    # w = get_weights_but_fast(memories=X)
-
-    punto_1_3()
 
