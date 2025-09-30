@@ -47,11 +47,9 @@ def update_parallel(s, w):
 
 def update_sequential(s, w):
     #updates s in-place sequentially
-    weighted_sum = np.zeros(np.shape(s))
     for i, _ in enumerate(s):
-        for j, wij in enumerate(w[i]):
-            weighted_sum[i] += wij*s[j]
-        s[i] = 1 if weighted_sum[i] > 0 else -1
+        weighted_sum = np.dot(w[i],s)
+        s[i] = 1 if weighted_sum > 0 else -1
 
 def update(s,w,mode="sequential"):
     return update_parallel(s,w) if mode=="parallel" else update_sequential(s,w)
