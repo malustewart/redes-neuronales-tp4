@@ -125,8 +125,26 @@ def punto_1_4_calc(Ns, alfas):
                      overlaps=overlaps,
                      )
 
+def punto_1_4_process(Ns, alfas):
+    print("******** PUNTO 1.4 PROCESAMIENTO *********")
+    for N in Ns:
+        for alfa in alfas:
+            p = int(alfa*N)
+            print(f"N={N} - alfa = {alfa} - p={p}")
+
+            filename = f"tp4_1_4_N_{N}_p_{p}.npz"
+            with np.load(filename) as data:
+                N = data["N"]
+                p = data["p"]
+                X = data["X"]
+                w = data["w"]
+                conv_points_s = data["conv_points_s"]
+                conv_time_s = data["conv_time_s"]
+                overlaps = data["overlaps"]
+                
+
 if __name__ == "__main__":
     np.random.seed(12345)
-    punto_1_4_calc([10,100], [0.2])
+    punto_1_4_calc([500], [0.12, 0.14, 0.16, 0.18])
 
 
