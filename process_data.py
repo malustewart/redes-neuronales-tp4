@@ -72,7 +72,7 @@ def load_all_overlaps(Ns, alfas):
         overlap_data[N] = {}
         for alfa in alfas:
             p = int(alfa*N)
-            filename = f"tp4_1_4_N_{N}_p_{p}.npz"
+            filename = f".\\data\\tp4_1_4_N_{N}_p_{p}.npz"
             with np.load(filename) as data:
                 overlaps = data["overlaps"]
                 overlap_data[N][alfa] = overlaps
@@ -81,22 +81,8 @@ def load_all_overlaps(Ns, alfas):
 
 def punto_1_4_process(Ns, alfas):
     print("******** PUNTO 1.4 PROCESAMIENTO *********")
-    for N in Ns:
-        for alfa in alfas:
-            overlap_data = load_all_overlaps(Ns, alfas)
 
-            p = int(alfa*N)
-            print(f"N={N} - alfa={alfa} - p={p}")
-
-            filename = f"tp4_1_4_N_{N}_p_{p}.npz"
-            with np.load(filename) as data:
-                N = data["N"]
-                p = data["p"]
-                X = data["X"]
-                w = data["w"]
-                conv_points_s = data["conv_points_s"]
-                conv_time_s = data["conv_time_s"]
-                overlaps = data["overlaps"]
+    overlap_data = load_all_overlaps(Ns, alfas)
 
     bins = np.linspace(0.5,1.001,30)
     plot_overlap_histograms(overlap_data, bins=bins)
@@ -104,5 +90,4 @@ def punto_1_4_process(Ns, alfas):
     plot_histograms_per_alfa(overlap_data, bins=bins)
 
 if __name__ == "__main__":
-    punto_1_4_process([500, 1000, 2000],[0.12, 0.14])
-    plt.show()
+    punto_1_4_process([500, 1000, 2000, 4000],[0.12, 0.14, 0.16, 0.18])
