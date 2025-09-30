@@ -55,22 +55,26 @@ def update_sequential(s, w):
 def update(s,w,mode="sequential"):
     return update_parallel(s,w) if mode=="parallel" else update_sequential(s,w)
 
+def get_overlap(s,x):
+    N = len(s)
+    return np.dot(s,x) / N
+
 def get_conv_time_and_point(s0, w, max_iters, mode="sequential"):
     s = s0.copy()
     prev_s = np.empty_like(s)
     for k in range(max_iters):
         prev_s[:] = s
         update(s, w, mode)
-        print_state(prev_s, f"p{k}")
-        print_state(s, f"s{k}")
         if np.equal(s,prev_s).all():
             return [s, k]
     return [s, np.inf]
 
 def punto_1_3_calc(Ns, alfas):
+    print("******** PUNTO 1.3 CALCULO *********")
     for N in Ns:
         for alfa in alfas:
             p = int(alfa*N)
+            print(f"N={N} - alfa = {alfa} - p={p}")
 
             X = create_random_memories(N, p)
             w = get_weights_but_fast(memories=X)
@@ -95,10 +99,34 @@ def punto_1_3_calc(Ns, alfas):
                      conv_time_s=conv_time_s,
                      )
 
+def punto_1_4_calc(Ns, alfas):
+    print("******** PUNTO 1.4 CALCULO *********")
+    for N in Ns:
+        for alfa in alfas:
+            p = int(alfa*N)
+            print(f"N={N} - alfa = {alfa} - p={p}")
 
+            X = create_random_memories(N, p)
+            w = get_weights_but_fast(memories=X)
+
+            conv_points_s, conv_time_s = map(np.array, zip(*[ 
+                get_conv_time_and_point(x, w, 20, mode="sequential") 
+                for x in tqdm(X, desc="Sequential calculation")
+            ]))
+            overlaps = [get_overlap(s,x) for s,x,t in zip(conv_points_s, X, conv_time_s) if t < np.inf]
+            filename = f"tp4_1_4_N_{N}_p_{p}.npz"
+            np.savez(filename,
+                     N=N,
+                     p=p,
+                     X=X,
+                     w=w,
+                     conv_points_s=conv_points_s,
+                     conv_time_s=conv_time_s,
+                     overlaps=overlaps,
+                     )
 
 if __name__ == "__main__":
     np.random.seed(12345)
-    punto_1_3_calc([10,100], [0.2])
+    punto_1_4_calc([10,100], [0.2])
 
 
