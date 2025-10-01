@@ -65,39 +65,17 @@ def plot_histograms_per_alfa(overlap_data, bins=20, save_folder=".\\figs"):
         plt.savefig(filename)
         plt.close()
 
+
 def plot_conv_times(conv_times:dict, save_folder=".\\figs"):
     for N in conv_times.keys():
         for alfa in conv_times[N].keys():
             t_s, count_s = conv_times[N][alfa]["sequential"]
             t_p, count_p = conv_times[N][alfa]["parallel"]
+            t_s = [str(int(t)) if t < np.inf else "No converge" for t in t_s]
+            t_p = [str(int(t)) if t < np.inf else "No converge" for t in t_p]
             plt.figure()
-            plt.bar(t_s, count_s, label="Secuencial", alpha=0.7, color='C0')
-            plt.bar(t_p, count_p, label="Paralelo", alpha=0.7, color='C1')
-
-            count_non_conv_s = count_s[np.where(t_s == np.inf)]
-            count_non_conv_p = count_p[np.where(t_p == np.inf)]
-            # plt.bar([-1], count_non_conv_s, alpha=0.7,color="C0")
-            # plt.bar([-1], count_non_conv_p, alpha=0.7,color="C1", hatch="///")
-
-
-
-            # # --- Sequential ---
-            # for t, c in zip(t_s, count_s):
-            #     if np.isinf(t):
-            #         # Special bar for non-convergence
-            #         plt.bar("No converge", c, label="Secuencial (no converge)", 
-            #                 alpha=0.7, hatch="///", color="C0", edgecolor="black")
-            #     else:
-            #         plt.bar(t, c, label="Secuencial", alpha=0.7, color="C0", edgecolor="black")
-
-            # # --- Parallel ---
-            # for t, c in zip(t_p, count_p):
-            #     if np.isinf(t):
-            #         plt.bar("No converge", c, label="Paralelo (no converge)", 
-            #                 alpha=0.7, hatch="\\\\\\", color="C1", edgecolor="black")
-            #     else:
-            #         plt.bar(t, c, label="Paralelo", alpha=0.7, color="C1", edgecolor="black")
-
+            plt.bar(t_s, count_s, label="Secuencial", alpha=0.3, color='C0')
+            plt.bar(t_p, count_p, label="Paralelo", alpha=0.3, color='C1')
 
             plt.title(f"Iteraciones hasta convergencia: N={N}, α={alfa}")
             plt.xlabel("Iteraciones hasta convergencia")
