@@ -120,7 +120,8 @@ def plot_overlaps_evolution(data, save_folder=".\\figs"):
     _, _, iters = np.shape(overlaps)
 
     plt.figure()
-    [plt.plot(range(iters + 1), np.concatenate([[1],np.mean(overlap, axis=0)]), marker="o", label=f"T={T}") for T, overlap in zip(Ts[::4],overlaps[::4])]
+    for T, overlap in zip(Ts[::4],overlaps[::4]):
+        plt.plot(range(iters + 1), np.concatenate([[1],np.mean(overlap, axis=0)]), marker="o", label=f"T={T}")
     plt.xlabel("Iteraciones")
     plt.ylabel("Overlap promedio")
     plt.title(f"Evolucion del overlap promedio (N={N}, alfa={alfa:.3f}, iteraciones={iters})")
