@@ -16,7 +16,7 @@ def plot_overlap_histograms(overlap_data, bins=20, save_folder=".\\figs"):
     for N, alfa_dict in overlap_data.items():
         for alfa, overlaps in alfa_dict.items():
             plt.figure()
-            plt.hist(overlaps, bins=bins, edgecolor='black', alpha=0.7)
+            plt.hist(overlaps, bins=bins, edgecolor='black', alpha=0.7, desity=True)
             plt.title(f"Overlaps: N={N}, α={alfa}")
             plt.xlabel("Overlap m")
             plt.ylabel("Frecuencia")
@@ -32,7 +32,7 @@ def plot_histograms_per_N(overlap_data, bins=20, save_folder=".\\figs"):
     for N, alfa_dict in overlap_data.items():
         plt.figure()
         for alfa, overlaps in alfa_dict.items():
-            plt.hist(overlaps, bins=bins, alpha=0.5, label=f"α={alfa}", edgecolor='black')
+            plt.hist(overlaps, bins=bins, alpha=0.5, label=f"α={alfa}", edgecolor='black', density=True)
         plt.title(f"Overlaps para N={N}")
         plt.xlabel("Overlap m")
         plt.ylabel("Frecuencia")
@@ -56,7 +56,7 @@ def plot_histograms_per_alfa(overlap_data, bins=20, save_folder=".\\figs"):
         for N, alfa_dict in overlap_data.items():
             if alfa in alfa_dict:
                 overlaps = alfa_dict[alfa]
-                plt.hist(overlaps, bins=bins, alpha=0.5, label=f"N={N}", edgecolor='black')
+                plt.hist(overlaps, bins=bins, alpha=0.5, label=f"N={N}", edgecolor='black', density=True)
         plt.title(f"Overlaps para α={alfa}")
         plt.xlabel("Overlap m")
         plt.ylabel("Frecuencia")
@@ -195,6 +195,6 @@ def punto_2_process(Ns, alfas, Ts, iters):
             plot_overlaps_evolution(data)
 
 if __name__ == "__main__":
-    # punto_1_3_process([3000],[0.1])
-    # punto_1_4_process([500, 1000, 2000, 4000],[0.12, 0.14, 0.16, 0.18])
-    punto_2_process([4000],[0.01],[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0], iters=10)
+    punto_1_3_process([3000],[0.1])
+    punto_1_4_process([500, 1000, 2000, 4000],[0.12, 0.14, 0.16, 0.18])
+    # punto_2_process([4000],[0.01],[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0], iters=10)
