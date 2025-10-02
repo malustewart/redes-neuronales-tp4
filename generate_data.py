@@ -2,6 +2,7 @@ import numpy as np
 import time
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import random
 
 def create_random_memories(N,p):
     # returns p random memories
@@ -55,6 +56,24 @@ def update_sequential(s, w):
 
 def update(s,w,mode="sequential"):
     return update_parallel(s,w) if mode=="parallel" else update_sequential(s,w)
+
+def update_parallel_noisy(s, w, beta):
+    exp_bh = np.exp(beta * np.matmul(w,s))
+    P = exp_bh/(exp_bh+1./exp_bh)
+    s[:] = np.array([random.choices([-1, 1], weights=[1-p, p], k=1)[0] for p in P])
+
+def update_sequential_noisy(s,w,beta):
+    for i, _ in enumerate(s):
+        exp_bh = np.exp(beta * np.dot(w[i],s))
+        P_i = exp_bh/(exp_bh+1./exp_bh)
+        s[i] = random.choices([-1, 1], weights=[1-P_i, P_i], k=1)[0]
+
+def update_noisy(s, w, beta, mode="sequential"):
+    return update_parallel_noisy(s,w, beta) if mode=="parallel" else update_sequential_noisy(s,w, beta)
+
+def get_next_state_noisy(s, w, beta, overlaps, iters=10, mode="sequential"):
+    for i in range(iters):
+        update_noisy(s, w, beta, mode)
 
 def get_overlap(s,x):
     N = len(s)
@@ -126,7 +145,33 @@ def punto_1_4_calc(Ns, alfas):
                      overlaps=overlaps,
                      )
 
+def punto_2_calc(Ns, alfas, Ts, iters=10):
+    print("******** PUNTO 1.4 CALCULO *********")
 
+    for N in Ns:
+        for alfa in alfas:
+            p = int(N*alfa)
+            overlaps = np.ndarray((len(Ts), p, iters), np.float32)
+
+            for i, T in tqdm(enumerate(Ts), f"N={N} - alfa={alfa}"):
+                print(f"\nT={T}\n")
+                beta = 1/T
+                X = create_random_memories(N, p)
+                w = get_weights_but_fast(memories=X)
+                for j, x in enumerate(X):
+                    s = x.copy()
+                    for k in range(iters):
+                        update_noisy(s, w, beta, mode="sequential")
+                        overlaps[i][j][k] = get_overlap(s,x)
+
+            T_str = "-".join(f"{T:.3f}" for T in Ts)
+            filename = f".\\data\\tp4_2_overlap_2_N_{N}_alfa_{alfa:.3f}_T_{T_str}_iters_{iters}.npz"
+            np.savez(filename,
+                    T=Ts,
+                    N=N,
+                    alfa=alfa,
+                    overlaps=overlaps
+                    )
 
 if __name__ == "__main__":
     np.random.seed(12345)
