@@ -115,7 +115,7 @@ def update_sequential_noisy(s,w,beta):
         s[i] = random.choices([-1, 1], weights=[1-P_i, P_i], k=1)[0]
 ```
 
-De la ecuación #ref(<eq:ruido>):
+De la #ref(<eq:ruido>):
 
 $ lim_(T->0) P(s_i (t+1) = 1) &= lim_(beta->infinity) e^(beta h_i (t))/(e^(beta h_i (t))+e^(-beta h_i (t))) \
 & = cases(
