@@ -2,3 +2,4 @@
 *.npz
 /figs
 /data
+*.pdf
