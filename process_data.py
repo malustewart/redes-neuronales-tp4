@@ -71,11 +71,23 @@ def plot_conv_times(conv_times:dict, save_folder=".\\figs"):
         for alfa in conv_times[N].keys():
             t_s, count_s = conv_times[N][alfa]["sequential"]
             t_p, count_p = conv_times[N][alfa]["parallel"]
+            
+            mask_s = t_s < np.inf
+            mask_p = t_p < np.inf
+
+            mean_s = np.average(t_s[mask_s], weights=count_s[mask_s]) if np.any(mask_s) else None
+            mean_p = np.average(t_p[mask_p], weights=count_p[mask_p]) if np.any(mask_p) else None
+
             t_s = [str(int(t)) if t < np.inf else "No converge" for t in t_s]
             t_p = [str(int(t)) if t < np.inf else "No converge" for t in t_p]
             plt.figure()
             plt.bar(t_s, count_s, label="Secuencial", alpha=0.3, color='C0')
             plt.bar(t_p, count_p, label="Paralelo", alpha=0.3, color='C1')
+
+            if mean_s is not None:
+                plt.axvline(mean_s, color='C0', linestyle='--', linewidth=2, label=f"Media Secuencial = {mean_s:.2f}")
+            if mean_p is not None:
+                plt.axvline(mean_p, color='C1', linestyle='--', linewidth=2, label=f"Media Paralelo = {mean_p:.2f}")
 
             plt.title(f"Iteraciones hasta convergencia: N={N}, α={alfa}")
             plt.xlabel("Iteraciones hasta convergencia")
@@ -196,5 +208,5 @@ def punto_2_process(Ns, alfas, Ts, iters):
 
 if __name__ == "__main__":
     punto_1_3_process([3000],[0.1])
-    punto_1_4_process([500, 1000, 2000, 4000],[0.12, 0.14, 0.16, 0.18])
+    # punto_1_4_process([500, 1000, 2000, 4000],[0.12, 0.14, 0.16, 0.18])
     # punto_2_process([4000],[0.01],[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0], iters=10)
